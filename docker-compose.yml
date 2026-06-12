@@ -20,6 +20,11 @@ services:
       IAE_API_KEY: 102022400289
       SERVICE_NAME: Guest-Service
       API_VERSION: v1
+      CENTRAL_SSO_JWKS_URL: https://iae-sso.virtualfri.id/api/v1/auth/jwks
+      CENTRAL_SOAP_AUDIT_URL: https://iae-sso.virtualfri.id/soap/v1/audit
+      CENTRAL_RABBITMQ_BRIDGE_URL: https://iae-sso.virtualfri.id/api/v1/messages/publish
+      CENTRAL_API_KEY: KEY-MHS-346
+      CENTRAL_TEAM_ID: TEAM-11
 
   db:
     image: mysql:8.0

@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\V1\GuestController;
 use App\Http\Middleware\ApiKeyMiddleware;
 
 // Tambahkan middleware 
-Route::prefix('v1')->middleware(ApiKeyMiddleware::class)->group(function () {
+Route::prefix('v1')->middleware('sso.jwt')->group(function () {
     
     // GET /{guestId}
     Route::get('/{guestId}', [GuestController::class, 'show']);

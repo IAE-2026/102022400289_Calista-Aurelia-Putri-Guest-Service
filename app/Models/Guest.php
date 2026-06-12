@@ -16,6 +16,7 @@ class Guest extends Model
         'email',
         'ktp_number',
         'phone_number',
+        'receipt_number',
     ];
 
     protected static function boot()
