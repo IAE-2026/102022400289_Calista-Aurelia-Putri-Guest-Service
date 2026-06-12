@@ -112,13 +112,3 @@ Laravel masih mencoba connect ke `127.0.0.1` dan belum terhubung ke database con
 Saya mencoba mengakses endpoint API tanpa API Key dan mendapatkan response 401 Unauthorized. Tolong jelaskan apakah middleware API Key saya sudah bekerja dengan benar.
 
 ---
-
-## Prompt 16
-[11/6/2026]
-
-Halo Antigravity. Bertindaklah sebagai Expert/Senior Laravel Developer. Saya sedang mengerjakan proyek sistem mikroservis (Guest Service) berbasis Laravel untuk mata kuliah Integrasi Aplikasi Enterprise. Saya perlu menyelesaikan "Tugas 3" yang ketentuan rubrikasinya ada pada file pdf "Tugas Besar  Tugas 3 - The Enterprise Digital City" dan "URL dan Akun Tugas IAE".
-Tolong buatkan solusi kodenya (termasuk perintah terminal jika butuh menginstal package pihak ketiga atau membuat migration). Silakan berkreasi untuk membuat Service Class atau pola lainnya agar logika integrasi ke dosen ini tidak mengotori logika bisnis utama di GuestController. Pastikan ada penanganan error yang baik. Saya mau kamu melakukan secara bertahap. Dan Terakhir, untuk yang melakukan hit / tembak nya nanti berikan tutorial untuk saya lakukan di post man.
-
----
-
----
