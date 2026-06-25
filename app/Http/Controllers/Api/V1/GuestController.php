@@ -33,7 +33,11 @@ class GuestController extends Controller
         security: [["ApiKeyAuth" => []]],
         tags: ["Guest Service (Data Diri Tamu)"],
         responses: [
-            new OA\Response(response: 200, description: "Success")
+            new OA\Response(
+                response: 200,
+                description: "Success",
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function index()
@@ -63,8 +67,16 @@ class GuestController extends Controller
             new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "string"))
         ],
         responses: [
-            new OA\Response(response: 200, description: "Success"),
-            new OA\Response(response: 404, description: "Not Found")
+            new OA\Response(
+                response: 200,
+                description: "Success",
+                content: new OA\JsonContent()
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Not Found",
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function show($id)
@@ -108,8 +120,16 @@ class GuestController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 201, description: "Created"),
-            new OA\Response(response: 422, description: "Validation Error")
+            new OA\Response(
+                response: 201,
+                description: "Created",
+                content: new OA\JsonContent()
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Validation Error",
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function store(Request $request)
