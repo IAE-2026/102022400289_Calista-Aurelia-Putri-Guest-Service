@@ -22,34 +22,79 @@ class GuestController extends Controller
         $this->soapLoggingService = $soapLoggingService;
         $this->rabbitMqPublisherService = $rabbitMqPublisherService;
     }
+
+    /**
+     * Collection: GET /api/v1/guests
+     * Mengambil daftar semua guest.
+     */
     #[OA\Get(
-        path: "/{guestId}",
-        summary: "Ambil profil guest",
+        path: "/guests",
+        summary: "Ambil daftar semua guest",
         security: [["ApiKeyAuth" => []]],
         tags: ["Guest Service (Data Diri Tamu)"],
-        parameters: [
-            new OA\Parameter(name: "guestId", in: "path", required: true, schema: new OA\Schema(type: "string"))
-        ],
         responses: [
             new OA\Response(response: 200, description: "Success")
         ]
     )]
-    public function show($guestId)
+    public function index()
     {
-        $guest = Guest::find($guestId);
-        if (!$guest) {
-            return response()->json(['status' => 'error', 'message' => 'Guest not found'], 404);
-        }
+        $guests = Guest::all();
         return response()->json([
             'status' => 'success',
-            'data' => $guest,
-            'meta' => ['service_name' => 'Guest-Service', 'api_version' => 'v1']
+            'message' => 'Data retrieved successfully',
+            'data' => $guests,
+            'meta' => [
+                'service_name' => env('SERVICE_NAME', 'Guest-Service'),
+                'api_version' => env('API_VERSION', 'v1')
+            ]
         ], 200);
     }
 
+    /**
+     * Resource: GET /api/v1/guests/{id}
+     * Mengambil data guest spesifik berdasarkan ID.
+     */
+    #[OA\Get(
+        path: "/guests/{id}",
+        summary: "Ambil profil guest berdasarkan ID",
+        security: [["ApiKeyAuth" => []]],
+        tags: ["Guest Service (Data Diri Tamu)"],
+        parameters: [
+            new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "string"))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Success"),
+            new OA\Response(response: 404, description: "Not Found")
+        ]
+    )]
+    public function show($id)
+    {
+        $guest = Guest::find($id);
+        if (!$guest) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Guest not found',
+                'errors' => null
+            ], 404);
+        }
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data retrieved successfully',
+            'data' => $guest,
+            'meta' => [
+                'service_name' => env('SERVICE_NAME', 'Guest-Service'),
+                'api_version' => env('API_VERSION', 'v1')
+            ]
+        ], 200);
+    }
+
+    /**
+     * Action: POST /api/v1/guests
+     * Menambah data guest baru.
+     */
     #[OA\Post(
-        path: "/profile",
-        summary: "Simpan profile",
+        path: "/guests",
+        summary: "Tambah data guest baru",
         security: [["ApiKeyAuth" => []]],
         tags: ["Guest Service (Data Diri Tamu)"],
         requestBody: new OA\RequestBody(
@@ -63,10 +108,11 @@ class GuestController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 200, description: "Success")
+            new OA\Response(response: 201, description: "Created"),
+            new OA\Response(response: 422, description: "Validation Error")
         ]
     )]
-    public function storeProfile(Request $request)
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -92,35 +138,39 @@ class GuestController extends Controller
             );
 
             // 2. Perform legacy SOAP Audit log (Orchestration step 1)
-            $receiptNumber = $this->soapLoggingService->sendSoapAudit('StoreProfile', [
-                'id' => $guest->id,
-                'name' => $guest->name,
-                'email' => $guest->email,
-                'ktp_number' => $guest->ktp_number,
-                'phone_number' => $guest->phone_number,
-                'timestamp' => now()->toIso8601String(),
-            ]);
+            try {
+                $receiptNumber = $this->soapLoggingService->sendSoapAudit('StoreGuest', [
+                    'id' => $guest->id,
+                    'name' => $guest->name,
+                    'email' => $guest->email,
+                    'ktp_number' => $guest->ktp_number,
+                    'phone_number' => $guest->phone_number,
+                    'timestamp' => now()->toIso8601String(),
+                ]);
 
-            // Save Receipt Number to local DB
-            $guest->receipt_number = $receiptNumber;
-            $guest->save();
+                // Save Receipt Number to local DB
+                $guest->receipt_number = $receiptNumber;
+                $guest->save();
+            } catch (\Exception $e) {
+                Log::warning("SOAP Audit failed (non-critical): " . $e->getMessage());
+            }
 
             DB::commit();
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error("Failed to complete critical transaction: " . $e->getMessage());
+            Log::error("Failed to create guest: " . $e->getMessage());
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to process critical transaction: ' . $e->getMessage(),
+                'message' => 'Failed to create guest: ' . $e->getMessage(),
                 'errors' => null
             ], 500);
         }
 
-        // 3. Broadcast Event to RabbitMQ (Orchestration step 2)
+        // 3. Broadcast Event to RabbitMQ (non-critical)
         try {
-            $this->rabbitMqPublisherService->publishRabbitMessage('profile.stored', [
-                'event' => 'profile.stored',
+            $this->rabbitMqPublisherService->publishRabbitMessage('guest.created', [
+                'event' => 'guest.created',
                 'timestamp' => now()->toIso8601String(),
                 'team_id' => env('CENTRAL_TEAM_ID', 'TEAM-11'),
                 'data' => [
@@ -130,7 +180,6 @@ class GuestController extends Controller
                     'ktp_number' => $guest->ktp_number,
                     'phone_number' => $guest->phone_number,
                     'receipt_number' => $guest->receipt_number,
-                    'stored_by' => auth()->user() ? auth()->user()->email : 'system',
                 ]
             ]);
         } catch (\Exception $e) {
@@ -139,43 +188,12 @@ class GuestController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Profile saved and integrated successfully',
+            'message' => 'Guest created successfully',
             'data' => $guest,
             'meta' => [
-                'service_name' => 'Guest-Service',
-                'api_version' => 'v1',
-                'soap_audit' => 'SUCCESS',
-                'receipt_number' => $guest->receipt_number,
+                'service_name' => env('SERVICE_NAME', 'Guest-Service'),
+                'api_version' => env('API_VERSION', 'v1'),
             ]
-        ], 200);
-    }
-
-    #[OA\Post(
-        path: "/validate-ktp",
-        summary: "Validasi KTP",
-        security: [["ApiKeyAuth" => []]],
-        tags: ["Guest Service (Data Diri Tamu)"],
-        requestBody: new OA\RequestBody(
-            content: new OA\JsonContent(
-                properties: [
-                    new OA\Property(property: "ktp_number", type: "string", example: "1234567890123456")
-                ]
-            )
-        ),
-        responses: [
-            new OA\Response(response: 200, description: "Valid")
-        ]
-    )]
-    public function validateKtp(Request $request)
-    {
-        $guest = Guest::where('ktp_number', $request->ktp_number)->first();
-        if (!$guest) {
-            return response()->json(['status' => 'error', 'message' => 'KTP not found'], 404);
-        }
-        return response()->json([
-            'status' => 'success',
-            'data' => ['is_valid' => true, 'name' => $guest->name],
-            'meta' => ['service_name' => 'Guest-Service', 'api_version' => 'v1']
-        ], 200);
+        ], 201);
     }
 }

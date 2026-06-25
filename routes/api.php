@@ -2,18 +2,17 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\GuestController;
-use App\Http\Middleware\ApiKeyMiddleware;
 
-// Tambahkan middleware 
-Route::prefix('v1')->middleware('sso.jwt')->group(function () {
+// IAE-T2: Proteksi endpoint dengan X-IAE-KEY (NIM)
+Route::prefix('v1/guests')->middleware('api.key')->group(function () {
     
-    // GET /{guestId}
-    Route::get('/{guestId}', [GuestController::class, 'show']);
+    // Collection: GET /api/v1/guests → Mengambil daftar data
+    Route::get('/', [GuestController::class, 'index']);
     
-    // POST /profile
-    Route::post('/profile', [GuestController::class, 'storeProfile']);
+    // Resource: GET /api/v1/guests/{id} → Mengambil data spesifik
+    Route::get('/{id}', [GuestController::class, 'show']);
     
-    // POST /validate-ktp
-    Route::post('/validate-ktp', [GuestController::class, 'validateKtp']);
+    // Action: POST /api/v1/guests → Menambah data baru
+    Route::post('/', [GuestController::class, 'store']);
 
 });

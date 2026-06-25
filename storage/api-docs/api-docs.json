@@ -12,23 +12,14 @@
         }
     ],
     "paths": {
-        "/{guestId}": {
+        "/guests": {
             "get": {
                 "tags": [
                     "Guest Service (Data Diri Tamu)"
                 ],
-                "summary": "Ambil profil guest",
-                "operationId": "4364cb56c85ec697300f0839e90d7cc9",
-                "parameters": [
-                    {
-                        "name": "guestId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
+                "summary": "Ambil daftar semua guest",
+                "description": "Collection: GET /api/v1/guests\nMengambil daftar semua guest.",
+                "operationId": "ce9d0298984f85ba2015163dfb3530a2",
                 "responses": {
                     "200": {
                         "description": "Success"
@@ -39,15 +30,14 @@
                         "ApiKeyAuth": []
                     }
                 ]
-            }
-        },
-        "/profile": {
+            },
             "post": {
                 "tags": [
                     "Guest Service (Data Diri Tamu)"
                 ],
-                "summary": "Simpan profile",
-                "operationId": "f5720418303a77a6c5019843751f8cf5",
+                "summary": "Tambah data guest baru",
+                "description": "Action: POST /api/v1/guests\nMenambah data guest baru.",
+                "operationId": "fa11462ec637cff9fe913091616f2c4d",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -76,8 +66,11 @@
                     }
                 },
                 "responses": {
-                    "200": {
-                        "description": "Success"
+                    "201": {
+                        "description": "Created"
+                    },
+                    "422": {
+                        "description": "Validation Error"
                     }
                 },
                 "security": [
@@ -87,31 +80,30 @@
                 ]
             }
         },
-        "/validate-ktp": {
-            "post": {
+        "/guests/{id}": {
+            "get": {
                 "tags": [
                     "Guest Service (Data Diri Tamu)"
                 ],
-                "summary": "Validasi KTP",
-                "operationId": "4a12b24971abf1e6cbe856e6c57c78c1",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "ktp_number": {
-                                        "type": "string",
-                                        "example": "1234567890123456"
-                                    }
-                                },
-                                "type": "object"
-                            }
+                "summary": "Ambil profil guest berdasarkan ID",
+                "description": "Resource: GET /api/v1/guests/{id}\nMengambil data guest spesifik berdasarkan ID.",
+                "operationId": "96530a714f3e3f03ab529b3401272060",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
                         }
                     }
-                },
+                ],
                 "responses": {
                     "200": {
-                        "description": "Valid"
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
                     }
                 },
                 "security": [
