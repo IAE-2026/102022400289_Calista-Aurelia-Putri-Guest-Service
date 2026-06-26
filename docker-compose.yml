@@ -1,11 +1,8 @@
 services:
   app:
     build: .
-    container_name: guest-service-app
     ports:
       - "8001:8000"
-    volumes:
-      - .:/var/www
     depends_on:
       - db
     environment:
@@ -26,7 +23,6 @@ services:
 
   db:
     image: mysql:8.0
-    container_name: guest-service-db
     ports:
       - "3307:3306"
     environment:
@@ -37,7 +33,6 @@ services:
   
   phpmyadmin:
     image: phpmyadmin:latest
-    container_name: guest-service-phpmyadmin
     restart: unless-stopped
     ports:
       - "8080:80"

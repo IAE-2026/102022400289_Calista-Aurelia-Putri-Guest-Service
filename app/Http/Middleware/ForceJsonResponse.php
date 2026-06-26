@@ -22,7 +22,7 @@ class ForceJsonResponse
         $response = $next($request);
 
         if ($request->is('api/*') || $request->is('v1/*') || $request->is('guests*') || $response instanceof \Illuminate\Http\JsonResponse) {
-            $response->headers->set('Content-Type', 'application/json; charset=utf-8', true);
+            $response->headers->set('Content-Type', 'application/json', true);
         }
 
         return $response;
