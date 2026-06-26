@@ -18,5 +18,27 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                $statusCode = 500;
+                if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface) {
+                    $statusCode = $e->getStatusCode();
+                } elseif ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+                    $statusCode = 404;
+                } elseif ($e instanceof \Illuminate\Validation\ValidationException) {
+                    $statusCode = 422;
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $e->getMessage(),
+                        'errors' => $e->errors()
+                    ], $statusCode);
+                }
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $e->getMessage() ?: 'Internal Server Error',
+                    'errors' => null
+                ], $statusCode);
+            }
+        });
     })->create();

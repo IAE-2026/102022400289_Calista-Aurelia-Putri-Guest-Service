@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    'iae' => [
+        'api_key' => env('IAE_API_KEY', '102022400289'),
+        'service_name' => env('SERVICE_NAME', 'Guest-Service'),
+        'api_version' => env('API_VERSION', 'v1'),
+        'team_id' => env('CENTRAL_TEAM_ID', 'TEAM-11'),
+        'soap_url' => env('CENTRAL_SOAP_AUDIT_URL', 'https://iae-sso.virtualfri.id/soap/v1/audit'),
+        'rabbitmq_url' => env('CENTRAL_RABBITMQ_BRIDGE_URL', 'https://iae-sso.virtualfri.id/api/v1/messages/publish'),
+        'central_api_key' => env('CENTRAL_API_KEY', 'KEY-MHS-346'),
+        'sso_jwks_url' => env('CENTRAL_SSO_JWKS_URL', 'https://iae-sso.virtualfri.id/api/v1/auth/jwks'),
+    ],
+
 ];

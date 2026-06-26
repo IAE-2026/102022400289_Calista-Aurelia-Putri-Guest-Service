@@ -13,7 +13,7 @@ class RabbitMqPublisherService
     public function __construct(SsoIntegrationService $ssoService)
     {
         $this->ssoService = $ssoService;
-        $this->rabbitUrl = env('CENTRAL_RABBITMQ_BRIDGE_URL', 'https://iae-sso.virtualfri.id/api/v1/messages/publish');
+        $this->rabbitUrl = config('services.iae.rabbitmq_url');
     }
 
 

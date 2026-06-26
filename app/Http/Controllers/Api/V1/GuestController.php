@@ -48,8 +48,8 @@ class GuestController extends Controller
             'message' => 'Data retrieved successfully',
             'data' => $guests,
             'meta' => [
-                'service_name' => env('SERVICE_NAME', 'Guest-Service'),
-                'api_version' => env('API_VERSION', 'v1')
+                'service_name' => config('services.iae.service_name'),
+                'api_version' => config('services.iae.api_version')
             ]
         ], 200);
     }
@@ -94,8 +94,8 @@ class GuestController extends Controller
             'message' => 'Data retrieved successfully',
             'data' => $guest,
             'meta' => [
-                'service_name' => env('SERVICE_NAME', 'Guest-Service'),
-                'api_version' => env('API_VERSION', 'v1')
+                'service_name' => config('services.iae.service_name'),
+                'api_version' => config('services.iae.api_version')
             ]
         ], 200);
     }
@@ -192,7 +192,7 @@ class GuestController extends Controller
             $this->rabbitMqPublisherService->publishRabbitMessage('guest.created', [
                 'event' => 'guest.created',
                 'timestamp' => now()->toIso8601String(),
-                'team_id' => env('CENTRAL_TEAM_ID', 'TEAM-11'),
+                'team_id' => config('services.iae.team_id'),
                 'data' => [
                     'guest_id' => $guest->id,
                     'name' => $guest->name,
@@ -211,8 +211,8 @@ class GuestController extends Controller
             'message' => 'Guest created successfully',
             'data' => $guest,
             'meta' => [
-                'service_name' => env('SERVICE_NAME', 'Guest-Service'),
-                'api_version' => env('API_VERSION', 'v1'),
+                'service_name' => config('services.iae.service_name'),
+                'api_version' => config('services.iae.api_version'),
             ]
         ], 201);
     }

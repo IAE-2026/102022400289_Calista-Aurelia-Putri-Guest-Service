@@ -14,8 +14,8 @@ class SoapLoggingService
     public function __construct(SsoIntegrationService $ssoService)
     {
         $this->ssoService = $ssoService;
-        $this->soapUrl = env('CENTRAL_SOAP_AUDIT_URL', 'https://iae-sso.virtualfri.id/soap/v1/audit');
-        $this->teamId = env('CENTRAL_TEAM_ID', 'TEAM-11');
+        $this->soapUrl = config('services.iae.soap_url');
+        $this->teamId = config('services.iae.team_id');
     }
 
     public function sendSoapAudit(string $activityName, array $logData): string

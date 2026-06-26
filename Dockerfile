@@ -17,4 +17,4 @@ RUN chown -R www-data:www-data /var/www/storage
 
 EXPOSE 8000
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+CMD sh -c "until php -r \"new PDO('mysql:host=' . (getenv('DB_HOST') ?: 'db') . ';port=' . (getenv('DB_PORT') ?: 3306), getenv('DB_USERNAME') ?: 'root', getenv('DB_PASSWORD') ?: '');\" 2>/dev/null; do echo 'Waiting for database...'; sleep 2; done && php artisan config:clear && php artisan migrate --force && php artisan l5-swagger:generate && php artisan serve --host=0.0.0.0 --port=8000"

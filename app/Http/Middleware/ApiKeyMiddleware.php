@@ -16,7 +16,7 @@ class ApiKeyMiddleware
         
         $apiKey = $request->header('X-IAE-KEY');
         
-        $validKey = env('IAE_API_KEY');
+        $validKey = config('services.iae.api_key');
 
         if (!$apiKey || $apiKey !== $validKey) {
             return response()->json([

@@ -15,8 +15,8 @@ class SsoIntegrationService
 
     public function __construct()
     {
-        $this->jwksUrl = env('CENTRAL_SSO_JWKS_URL', 'https://iae-sso.virtualfri.id/api/v1/auth/jwks');
-        $this->apiKey = env('CENTRAL_API_KEY', 'KEY-MHS-346');
+        $this->jwksUrl = config('services.iae.sso_jwks_url');
+        $this->apiKey = config('services.iae.central_api_key');
     }
 
     public function getServiceToken(): string
