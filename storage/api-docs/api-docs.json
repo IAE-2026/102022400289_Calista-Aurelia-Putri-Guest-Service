@@ -7,19 +7,19 @@
     },
     "servers": [
         {
-            "url": "/api/v1",
+            "url": "/",
             "description": "API Server"
         }
     ],
     "paths": {
-        "/guests": {
+        "/api/v1/guests": {
             "get": {
                 "tags": [
                     "Guest Service (Data Diri Tamu)"
                 ],
                 "summary": "Ambil daftar semua guest",
                 "description": "Collection: GET /api/v1/guests\nMengambil daftar semua guest.",
-                "operationId": "ce9d0298984f85ba2015163dfb3530a2",
+                "operationId": "2a4071b3b7b64836d4f7ff4cf5bdbe67",
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -42,7 +42,7 @@
                 ],
                 "summary": "Tambah data guest baru",
                 "description": "Action: POST /api/v1/guests\nMenambah data guest baru.",
-                "operationId": "fa11462ec637cff9fe913091616f2c4d",
+                "operationId": "ba7114d5bd8184b0149e88e634336bea",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -95,14 +95,14 @@
                 ]
             }
         },
-        "/guests/{id}": {
+        "/api/v1/guests/{id}": {
             "get": {
                 "tags": [
                     "Guest Service (Data Diri Tamu)"
                 ],
                 "summary": "Ambil profil guest berdasarkan ID",
                 "description": "Resource: GET /api/v1/guests/{id}\nMengambil data guest spesifik berdasarkan ID.",
-                "operationId": "96530a714f3e3f03ab529b3401272060",
+                "operationId": "cb620592794746fd435ead18f15ffc4b",
                 "parameters": [
                     {
                         "name": "id",

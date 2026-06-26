@@ -21,7 +21,7 @@ class ApiKeyMiddleware
         if (!$apiKey || $apiKey !== $validKey) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Unauthorized: Invalid or missing X-IAE-KEY',
+                'message' => 'API Key is required',
                 'errors' => null
             ], 401);
         }

@@ -29,6 +29,7 @@ class SsoIntegrationService
                 'Content-Type' => 'application/json',
             ])->post('https://iae-sso.virtualfri.id/api/v1/auth/token', [
                 'api_key' => $this->apiKey,
+                'nim' => config('services.iae.api_key'),
             ]);
 
             if ($response->failed()) {

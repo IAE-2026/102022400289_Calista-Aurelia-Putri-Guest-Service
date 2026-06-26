@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'api.key' => \App\Http\Middleware\ApiKeyMiddleware::class,
             'sso.jwt' => \App\Http\Middleware\SsoJwtMiddleware::class,
         ]);
+        $middleware->prependToGroup('api', \App\Http\Middleware\ForceJsonResponse::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
@@ -30,7 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     return response()->json([
                         'status' => 'error',
                         'message' => $e->getMessage(),
-                        'errors' => $e->errors()
+                        'errors' => $e->validator->errors()->all()
                     ], $statusCode);
                 }
 

@@ -28,7 +28,7 @@ class GuestController extends Controller
      * Mengambil daftar semua guest.
      */
     #[OA\Get(
-        path: "/guests",
+        path: "/api/v1/guests",
         summary: "Ambil daftar semua guest",
         security: [["ApiKeyAuth" => []]],
         tags: ["Guest Service (Data Diri Tamu)"],
@@ -59,7 +59,7 @@ class GuestController extends Controller
      * Mengambil data guest spesifik berdasarkan ID.
      */
     #[OA\Get(
-        path: "/guests/{id}",
+        path: "/api/v1/guests/{id}",
         summary: "Ambil profil guest berdasarkan ID",
         security: [["ApiKeyAuth" => []]],
         tags: ["Guest Service (Data Diri Tamu)"],
@@ -85,7 +85,7 @@ class GuestController extends Controller
         if (!$guest) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Guest not found',
+                'message' => 'Resource not found',
                 'errors' => null
             ], 404);
         }
@@ -105,7 +105,7 @@ class GuestController extends Controller
      * Menambah data guest baru.
      */
     #[OA\Post(
-        path: "/guests",
+        path: "/api/v1/guests",
         summary: "Tambah data guest baru",
         security: [["ApiKeyAuth" => []]],
         tags: ["Guest Service (Data Diri Tamu)"],
@@ -145,7 +145,7 @@ class GuestController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Validation failed',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors()->all()
             ], 422);
         }
 
@@ -208,7 +208,7 @@ class GuestController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Guest created successfully',
+            'message' => 'Data created successfully',
             'data' => $guest,
             'meta' => [
                 'service_name' => config('services.iae.service_name'),
