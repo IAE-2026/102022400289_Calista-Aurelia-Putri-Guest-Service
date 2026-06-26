@@ -4,7 +4,8 @@ services:
     ports:
       - "8001:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       DB_CONNECTION: mysql
       DB_HOST: db
@@ -30,6 +31,11 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     volumes:
       - guest-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
   
   phpmyadmin:
     image: phpmyadmin:latest

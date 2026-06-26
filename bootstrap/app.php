@@ -35,9 +35,14 @@ return Application::configure(basePath: dirname(__DIR__))
                     ], $statusCode);
                 }
 
+                $message = $e->getMessage() ?: 'Internal Server Error';
+                if ($statusCode === 404 && (!$e->getMessage() || str_contains($e->getMessage(), 'No query results') || str_contains($e->getMessage(), 'The route'))) {
+                    $message = 'Resource not found';
+                }
+
                 return response()->json([
                     'status' => 'error',
-                    'message' => $e->getMessage() ?: 'Internal Server Error',
+                    'message' => $message,
                     'errors' => null
                 ], $statusCode);
             }
